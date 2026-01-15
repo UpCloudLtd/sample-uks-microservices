@@ -1,0 +1,75 @@
+# Do not upload VCS metadata or CI config
+.git/
+.gitignore
+.github/
+.gitlab/
+.vscode/
+.idea/
+
+# OS and editor noise
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Terraform local directories
+.terraform/
+.terraform.d/
+*.tfstate
+*.tfstate.*
+
+
+# Local logs, temp, and tools
+logs/
+tmp/
+*.log
+*.tmp
+
+# Ignore crash logs
+crash.log
+crash.*.log
+
+# Binary tooling or build artifacts (if any)
+bin/
+dist/
+build/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Any local test or example directories you don't need in remote runs
+tests/
+examples/
+
+# Kubeconfig / credentials should never be uploaded
+kubeconfig
+kubeconfig.*
+*.kubeconfig
+
+# Secret files
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.csr
+*.enc
+*.secret
+*.secrets
+.env
+.env.*
+terraform.tfvars
+terraform.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
+*.tfvars
+*.tfvars.json
+
+# Editor / OS junk
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo

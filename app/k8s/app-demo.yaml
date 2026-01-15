@@ -1,0 +1,147 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: app-demo
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orders-demo-config
+  namespace: app-demo
+data:
+  # Will be filled by envsubst from $RABBITMQ_URL
+  RABBITMQ_URL: "${RABBITMQ_URL}"
+  # Will be filled by envsubst from $POSTGRES_DSN (used by API/Worker/Job)
+  POSTGRES_DSN: "${POSTGRES_DSN}"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-api
+  namespace: app-demo
+  labels:
+    app: orders-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: orders-api
+  template:
+    metadata:
+      labels:
+        app: orders-api
+    spec:
+      containers:
+        - name: orders-api
+          image: "${IMAGE_API}"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: RABBITMQ_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: orders-demo-config
+                  key: RABBITMQ_URL
+            - name: POSTGRES_DSN
+              value: "${POSTGRES_DSN}"
+              valueFrom:
+                configMapKeyRef:
+                  name: orders-demo-config
+                  key: POSTGRES_DSN
+          ports:
+            - containerPort: 8080
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-api
+  namespace: app-demo
+  labels:
+    app: orders-api
+spec:
+  type: NodePort
+  selector:
+    app: orders-api
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+      nodePort: 31082
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-worker
+  namespace: app-demo
+  labels:
+    app: orders-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders-worker
+  template:
+    metadata:
+      labels:
+        app: orders-worker
+    spec:
+      containers:
+        - name: orders-worker
+          image: "${IMAGE_WORKER}"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: RABBITMQ_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: orders-demo-config
+                  key: RABBITMQ_URL
+            - name: POSTGRES_DSN
+              value: "${POSTGRES_DSN}"
+              valueFrom:
+                configMapKeyRef:
+                  name: orders-demo-config
+                  key: POSTGRES_DSN
+          ports:
+            - containerPort: 8081
+              name: metrics
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: metrics
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: metrics
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-worker-metrics
+  namespace: app-demo
+  labels:
+    app: orders-worker
+spec:
+  type: NodePort
+  selector:
+    app: orders-worker
+  ports:
+    - name: metrics
+      port: 8081
+      targetPort: metrics
+      nodePort: 31083

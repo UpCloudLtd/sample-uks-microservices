@@ -1,0 +1,7 @@
+[submodule "infra"]
+  path = infra
+  url = https://github.com/praivan/uks-microservices-full.git
+
+[submodule "app"]
+  path = app
+  url = https://github.com/praivan/upcloud-uks-orders-demo.git

@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: orders-migrate
+  namespace: app-demo
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: postgres:17
+          env:
+            - name: POSTGRES_DSN
+              valueFrom:
+                configMapKeyRef:
+                  name: orders-demo-config
+                  key: POSTGRES_DSN
+          command: ["bash","-lc"]
+          args:
+            - |
+              set -euo pipefail
+              echo "Running schema migration..."
+              psql "$POSTGRES_DSN" <<'SQL'
+              CREATE TABLE IF NOT EXISTS orders (
+                order_id   text PRIMARY KEY,
+                created_at timestamptz NOT NULL DEFAULT now()
+              );
+
+              -- Worker expects this:
+              ALTER TABLE orders
+                ADD COLUMN IF NOT EXISTS quantity integer NOT NULL DEFAULT 1;
+              SQL
+              echo "Migration done."

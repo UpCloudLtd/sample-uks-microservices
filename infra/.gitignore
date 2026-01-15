@@ -1,0 +1,76 @@
+# --- Terraform directories ---
+# Local plugin/metadata cache
+.terraform/
+.terraform.d/
+
+# Terraform state
+*.tfstate
+*.tfstate.backup
+*.tfstate.*
+crash.log
+crash.*.log
+terraform.tfstate
+terraform.tfstate.*
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/.terraform/
+.terraform.lock.hcl
+
+# Ignore plan files
+*.tfplan
+
+# Local-only overrides
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI config files (local only)
+.terraformrc
+terraform.rc
+
+# Secret / variable files
+terraform.tfvars
+terraform.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
+
+# Generic secret/sensitive patterns (optional but helpful)
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.csr
+*.enc
+*.secret
+*.secrets
+.env
+.env.*
+
+# Kube configs / generated credentials
+kubeconfig
+kubeconfig.*
+*.kubeconfig
+*kubeconfig*.yml
+*kubeconfig*.yaml
+
+
+# Editor / OS noise
+.idea/
+.vscode/
+*.swp
+*.swo
+*.log
+*.tmp
+*~
+.DS_Store
+Thumbs.db
+
+# Python / tooling junk (if you further script around this)
+__pycache__/
+*.pyc
+
+# Local kubeconfig files you might generate later
+kubeconfig-*.yml
+kubeconfig-*.yaml

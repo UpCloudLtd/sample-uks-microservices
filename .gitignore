@@ -1,0 +1,24 @@
+# Submodules have their own ignores; this is only for blueprint-level artifacts
+.DS_Store
+.idea/
+.vscode/
+
+# Smoke test temp files
+smoke/.tmp/
+smoke/*.log
+
+# If you ever drop a kubeconfig at the blueprint root
+kubeconfig-*.yml
+
+
+# --- local kubeconfigs (never commit) ---
+*kubeconfig*.yml
+*kubeconfig*.yaml
+
+# --- terraform local state (never commit) ---
+terraform.tfstate
+terraform.tfstate.*
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/.terraform/
+.terraform.lock.hcl

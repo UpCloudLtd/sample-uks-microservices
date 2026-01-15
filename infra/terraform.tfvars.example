@@ -1,0 +1,3 @@
+vm_admin_ssh_public_key          = "your-public-key"
+object_storage_access_key_id     = "your-object-storage-access-key"
+object_storage_secret_access_key = "your-object-storage-secret-acccess-key"
